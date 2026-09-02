@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Polaroid Frame Studio</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Fontes do Google para estilo de escrita manual em polaroids -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo">
+      <span class="icon">📷</span>
+      <h1>Polaroid Studio</h1>
+    </div>
+    <nav class="app-nav">
+      <button id="nav-capture-btn" class="nav-btn active">Capturar</button>
+      <button id="nav-mural-btn" class="nav-btn">Mural (<span id="mural-count">0</span>)</button>
+    </nav>
+  </header>
+
+  <main class="app-container">
+    <!-- Seção de Captura e Edição -->
+    <section id="section-capture" class="view-section active">
+      <div class="camera-card">
+        <div class="camera-viewport-wrapper">
+          <video id="camera-feed" autoplay playsinline muted></video>
+          <canvas id="snapshot-canvas" style="display: none;"></canvas>
+          <div id="camera-placeholder" class="camera-placeholder">
+            <span class="placeholder-icon">📷</span>
+            <p>Sua câmera aparecerá aqui</p>
+            <button id="start-camera-btn" class="btn btn-primary">Ativar Câmera</button>
+            <label for="file-upload-input" class="btn btn-secondary">Ou escolha uma foto</label>
+            <input type="file" id="file-upload-input" accept="image/*" style="display: none;" />
+          </div>
+        </div>
+
+        <div id="camera-controls" class="camera-controls" style="display: none;">
+          <button id="capture-btn" class="btn btn-capture" title="Tirar foto">
+            <span class="btn-capture-inner"></span>
+          </button>
+          <button id="switch-camera-btn" class="btn btn-icon" title="Trocar câmera">🔄</button>
+          <label for="file-upload-alt-input" class="btn btn-icon" title="Enviar do dispositivo">📁</label>
+          <input type="file" id="file-upload-alt-input" accept="image/*" style="display: none;" />
+        </div>
+      </div>
+
+      <!-- Edição da Polaroid -->
+      <div id="editor-panel" class="editor-panel" style="display: none;">
+        <h2>Sua Polaroid</h2>
+
+        <div class="polaroid-preview-container">
+          <div id="polaroid-frame" class="polaroid-frame">
+            <div class="polaroid-photo-wrapper">
+              <img id="polaroid-img" src="" alt="Sua foto em Polaroid" />
+            </div>
+            <div id="polaroid-caption" class="polaroid-caption"></div>
+          </div>
+        </div>
+
+        <div class="editor-controls">
+          <div class="control-group">
+            <label for="caption-input">Legenda da Foto:</label>
+            <input type="text" id="caption-input" placeholder="Escreva algo especial..." maxlength="40" />
+          </div>
+
+          <div class="control-group">
+            <label>Cor da Moldura:</label>
+            <div class="color-picker-options">
+              <button class="color-btn active" data-color="#FFFFFF" style="background-color: #FFFFFF;" title="Branco Tradicional"></button>
+              <button class="color-btn" data-color="#FFF9E6" style="background-color: #FFF9E6;" title="Creme Vintage"></button>
+              <button class="color-btn" data-color="#FFE4E6" style="background-color: #FFE4E6;" title="Rosa Suave"></button>
+              <button class="color-btn" data-color="#E0F2FE" style="background-color: #E0F2FE;" title="Azul Céu"></button>
+              <button class="color-btn" data-color="#FEF3C7" style="background-color: #FEF3C7;" title="Pastel Amarelo"></button>
+              <button class="color-btn" data-color="#DCFCE7" style="background-color: #DCFCE7;" title="Menta"></button>
+              <button class="color-btn" data-color="#F3E8FF" style="background-color: #F3E8FF;" title="Lavanda"></button>
+              <button class="color-btn" data-color="#1E293B" style="background-color: #1E293B;" title="Preto Noite"></button>
+              <input type="color" id="custom-color-picker" value="#FFFFFF" title="Cor personalizada" />
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button id="download-btn" class="btn btn-success">⬇ Baixar Polaroid</button>
+            <button id="add-to-mural-btn" class="btn btn-primary">🖼 Salvar no Mural</button>
+            <button id="retake-btn" class="btn btn-secondary">🔄 Nova Foto</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção do Mural de Fotos da Sessão -->
+    <section id="section-mural" class="view-section" style="display: none;">
+      <div class="mural-header">
+        <div class="mural-title">
+          <h2>Mural da Sessão</h2>
+          <p>Fotos capturadas durante esta sessão</p>
+        </div>
+        <div class="mural-layout-selector">
+          <label>Layout:</label>
+          <div class="btn-group">
+            <button class="layout-btn active" data-layout="grid-2" title="Grade 2 colunas">2x2</button>
+            <button class="layout-btn" data-layout="grid-3" title="Grade 3 colunas">3x3</button>
+            <button class="layout-btn" data-layout="mosaic" title="Mosaico Flexível">Mosaico</button>
+            <button class="layout-btn" data-layout="timeline" title="Linha do Tempo">Timeline</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="mural-container" class="mural-container grid-2">
+        <div id="mural-empty-state" class="empty-state">
+          <span class="empty-icon">🖼</span>
+          <p>Seu mural ainda está vazio.</p>
+          <button id="go-to-capture-btn" class="btn btn-primary">Tirar a primeira foto</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Polaroid Studio &copy; 2025 - Crie e guarde suas memórias</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
